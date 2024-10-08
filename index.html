@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <style>
+        .color-preview {
+            width: 30px;
+            height: 30px;
+            display: inline-block;
+            border: 1px solid #000;
+            margin-left: 10px;
+        }
+        .form {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>QR Code Generator</h1>
+        <form action="/generate_qr" method="POST" enctype="multipart/form-data" class="form">
+            <label for="qr_type">QR Code Type:</label>
+            <select id="qr_type" name="qr_type" onchange="toggleWifiOptions()">
+                <option value="text">Text</option>
+                <option value="wifi">Wi-Fi</option>
+            </select>
+
+            <!-- Text QR Code input -->
+            <div id="text-data">
+                <label for="data">Enter Data for QR Code:</label>
+                <input type="text" id="data" name="data" required>
+            </div>
+
+            <!-- Wi-Fi QR Code inputs -->
+            <div id="wifi-data" style="display:none;">
+                <label for="ssid">Wi-Fi SSID:</label>
+                <input type="text" id="ssid" name="ssid" required>
+
+                <label for="password">Wi-Fi Password:</label>
+                <input type="password" id="password" name="password">
+
+                <label for="encryption">Encryption:</label>
+                <select id="encryption" name="encryption">
+                    <option value="WPA">WPA</option>
+                    <option value="WEP">WEP</option>
+                    <option value="nopass">None</option>
+                </select>
+
+                <label for="hidden">Hidden SSID:</label>
+                <select id="hidden" name="hidden">
+                    <option value="false">No</option>
+                    <option value="true">Yes</option>
+                </select>
+            </div>
+
+            <div class="color-picker">
+                <label for="fill_color">QR Code Color:</label>
+                <input type="color" id="fill_color" name="fill_color" value="#000000" onchange="updateColorPreview()">
+                <div id="fill_color_preview" class="color-preview" style="background-color: #000000;"></div>
+                
+                <label for="back_color">Background Color:</label>
+                <input type="color" id="back_color" name="back_color" value="#ffffff" onchange="updateColorPreview()">
+                <div id="back_color_preview" class="color-preview" style="background-color: #ffffff;"></div>
+            </div>
+            
+            <label for="logo">Upload a Logo (optional):</label>
+            <input type="file" id="logo" name="logo" accept="image/*">
+
+            <button type="submit" class="btn">Generate QR Code</button>
+        </form>
+
+        <h2>Batch QR Code Generation</h2>
+        <form action="/batch_generate" method="POST" enctype="multipart/form-data" class="form">
+            <label for="file">Upload a CSV file:</label>
+            <input type="file" id="file" name="file" accept=".csv" required>
+            <button type="submit" class="btn">Generate Batch QR Codes</button>
+        </form>
+
+        <h2>Decode QR Code</h2>
+        <form action="/decode_qr" method="POST" enctype="multipart/form-data" class="form">
+            <label for="qr_image">Upload a QR Code Image:</label>
+            <input type="file" id="qr_image" name="qr_image" accept="image/*" required>
+            <button type="submit" class="btn">Decode QR Code</button>
+        </form>
+    </div>
+
+    <script>
+        function toggleWifiOptions() {
+            const qrType = document.getElementById("qr_type").value;
+            const wifiData = document.getElementById("wifi-data");
+            const textData = document.getElementById("text-data");
+
+            if (qrType === "wifi") {
+                wifiData.style.display = "block";
+                textData.style.display = "none";
+            } else {
+                wifiData.style.display = "none";
+                textData.style.display = "block";
+            }
+        }
+
+        function updateColorPreview() {
+            const fillColor = document.getElementById("fill_color").value;
+            const backColor = document.getElementById("back_color").value;
+
+            document.getElementById("fill_color_preview").style.backgroundColor = fillColor;
+            document.getElementById("back_color_preview").style.backgroundColor = backColor;
+        }
+    </script>
+</body>
+</html>
